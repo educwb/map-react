@@ -1,0 +1,52 @@
+// npx create-react-app map-react
+
+// git remote add origin git@github.com:educwb/map-react.git
+
+// yarn add leaflet react-leaflet
+
+________________________________________________________________________________________________________________________________
+// https://stackoverflow.com/questions/67552020/how-to-fix-error-failed-to-compile-node-modules-react-leaflet-core-esm-pat
+// What finally did work was using the two libraries react-app-rewired and react-app-rewire-babel-loader. Steps necessary:
+
+// yarn add -D react-app-rewired react-app-rewire-babel-loader
+// Change script names in package.json according to the instructions for react-app-rewired:
+  /* package.json */
+
+  "scripts": {
+-   "start": "react-scripts start",
++   "start": "react-app-rewired start",
+-   "build": "react-scripts build",
++   "build": "react-app-rewired build",
+-   "test": "react-scripts test",
++   "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+}
+// Create config-overrides.js in the project's root according to instructions for react-app-rewire-babel-loader:
+/* config-overrides.js */
+
+const path = require("path");
+const fs = require("fs");
+const rewireBabelLoader = require("react-app-rewire-babel-loader");
+ 
+const appDirectory = fs.realpathSync(process.cwd());
+const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+
+module.exports = function override(config, env) {
+    config = rewireBabelLoader.include(
+        config,
+        resolveApp("node_modules/@react-leaflet")
+    );
+    config = rewireBabelLoader.include(
+        config,
+        resolveApp("node_modules/react-leaflet")
+    );
+
+    return config;
+};
+________________________________________________________________________________________________________________________________
+"scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+  },
